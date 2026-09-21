@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Seja bem vindo ao Império Nobre";
+}
+
+<div class="text-center">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    <h6>Por favor entre com seu usuário:</h6>
+    <br>
+</div>
+
+<form method="post">
+    <div class="text-center">
+        <h3>Login: </h3>
+        <input type="text" name="Nome" required />
+        <br><br>
+        <h3>Senha: </h3>
+        <input type="password" name="Senha" required />
+        <br><br>
+        <button type="submit">Entrar</button>
+    </div>
+</form>
+
+

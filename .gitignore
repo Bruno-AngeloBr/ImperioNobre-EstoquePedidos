@@ -1,0 +1,28 @@
+# Build e binários
+bin/
+obj/
+out/
+
+# Publicação
+publish/
+
+# Logs
+*.log
+
+# Configurações locais e credenciais
+ChaveCredencial-Cuidado/
+appsettings.Development.json
+*.json
+
+# Arquivos de usuário/IDE
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Cache do Visual Studio
+.vs/
+
+# Configurações temporárias
+*.tmp
+*.temp

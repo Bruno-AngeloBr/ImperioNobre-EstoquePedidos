@@ -1,0 +1,57 @@
+﻿@{
+    Layout = "_LayoutVendedor";
+}
+
+@{
+    ViewData["Title"] = "Bem vindo ao Painel de Vendedor";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="container mt-4">
+    <h2>Produtos Disponíveis</h2>
+    <h5>Estoque:</h5>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Preço</th>
+                <th>Disponível</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Cookie</td>
+                <td>R$ 5,00</td>
+                <td>20</td>
+                <td><button class="btn btn-primary btn-sm">Adicionar</button></td>
+            </tr>
+            <tr>
+                <td>Café</td>
+                <td>R$ 3,00</td>
+                <td>15</td>
+                <td><button class="btn btn-primary btn-sm">Adicionar</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Resumo do Pedido</h3>
+    <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            Cookie (2x)
+            <span>R$ 10,00</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            Café (1x)
+            <span>R$ 3,00</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center fw-bold">
+            Total
+            <span>R$ 13,00</span>
+        </li>
+    </ul>
+</div>
+
+
+

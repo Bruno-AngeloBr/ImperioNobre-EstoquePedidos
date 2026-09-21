@@ -1,0 +1,90 @@
+﻿@model IEnumerable<Produto>
+
+@{
+    Layout = "_LayoutAdmin";
+}
+
+@{
+    ViewData["Title"] = "Alterar - Estoque";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="container mt-4">
+    <h2>Produtos:</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Produto</th>
+                <th>Sabor</th>
+                <th>Tamanho</th>
+                <th>Preço</th>
+                <th>Quantidade Disponível</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ProdutosID</td>
+                    <td>@item.Nome</td>
+                    <td>@item.Sabor</td>
+                    <td>@item.Tamanho g</td>
+                    <td>@item.PrecoUnit.ToString("C")</td>
+                    <td>
+                        <input type="number" id="qtd-@item.ProdutosID"
+                               value="@item.QtdDisponivel"
+                               class="form-control form-control-sm"
+                               style="width:80px;" min="0" />
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-primary btn-sm w-50" onclick="alterarQtd(@item.ProdutosID, 1)">+</button>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-primary btn-sm w-50" onclick="alterarQtd(@item.ProdutosID, -1)">-</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button class="btn btn-success mt-3" onclick="salvarAlteracoes()">Salvar Alterações</button>
+
+    <script>
+        //Lista para guardar alterações do estoque
+        var alteracoes = [];
+
+        function alterarQtd(id, delta) {
+            var input = document.getElementById("qtd-" + id);
+            var qtdAtual = parseInt(input.value);
+            var novaQtd = qtdAtual + delta;
+            if (novaQtd < 0) novaQtd = 0;
+            input.value = novaQtd;
+            
+            // Atualiza ou adiciona na lista global
+            var existente = alteracoes.find(p => p.id == id);
+            if (existente) {
+                existente.quantidade = novaQtd;
+            } else {
+                alteracoes.push({ id: id, quantidade: novaQtd });
+            }
+        }
+        
+        function salvarAlteracoes() {
+            // Envia a lista global para o Controller
+            fetch('/AdminPainel/SalvarAlteracoes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(alteracoes)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Alterações salvas com sucesso!");
+                    } else {
+                        alert("Erro ao salvar alterações.");
+                    }
+                });
+        }
+    </script>
+
