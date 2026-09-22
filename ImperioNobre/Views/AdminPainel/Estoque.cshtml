@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<Produto>
+
+@{
     Layout = "_LayoutAdmin";
 }
 
@@ -29,20 +31,19 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Cookie</td>
-                <td>Nutella</td>
-                <td>110g</td>
-                <td>R$ 5,00</td>
-                <td>20</td>
-            </tr>
-            <tr>
-                <td>Café</td>
-                <td>Ninho</td>
-                <td>115g</td>
-                <td>R$ 3,00</td>
-                <td>15</td>
-            </tr>
+            @foreach (var item in Model)
+            {
+                @if (item.QtdDisponivel != 0)
+                {
+                    <tr>
+                        <td>@item.Nome</td>
+                        <td>@item.Sabor</td>
+                        <td>@item.Tamanho g</td>
+                        <td>@item.PrecoUnit.ToString("C")</td>
+                        <td>@item.QtdDisponivel</td>
+                    </tr>
+                }
+            }
         </tbody>
     </table>
 

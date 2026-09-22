@@ -74,7 +74,11 @@ namespace ImperioNobre.Controllers
                     {
                         // 8. Se bater, login válido
                         TempData["TipoUsuario"] = tipoUsuario; // guarda o tipo para usar depois
-                        return RedirectToAction("Index", "AdminPainel");
+
+                        if (tipoUsuario == "Admin")
+                            return RedirectToAction("Index", "AdminPainel");
+                        else
+                            return RedirectToAction("Index", "VendedorPainel"); 
                     }
                 }
             }
