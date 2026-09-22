@@ -1,9 +1,13 @@
 # Império Nobre - Estoque e Pedidos
 
-Sistema web em ASP.NET Core para gerenciamento de estoque e pedidos de venda da confeitaria Império Nobre.  
-Integração com Google Sheets para controle de produtos e quantidades disponíveis,
+Sistema web em ASP.NET Core para gerenciamento de estoque e pedidos de venda da confeitaria Império Nobre. Integração com Google Sheets para controle de produtos, quantidades disponíveis e criação de pedidos de venda.
 
-Projeto ainda em desenvolvimento, algumas funções ainda não foram implementadas,
+Meu objetivo nesse projeto é desenvolver um sistema de gerenciamento de pedidos eficiente para minha amiga que trabalha vendendo doces, ela utiliza uma planilha do Google Sheets para gerenciar suas vendas então quero integrar esse sistema à sua planilha para facilitar seu trabalho.
+
+Dessa forma permitindo um registro de vendas mais simples e dinâmico na sua planilha além de uma melhor visualização e controle de seu negócio.
+
+Projeto ainda em desenvolvimento.
+
 ---
 
 ## 🚀 Funcionalidades
