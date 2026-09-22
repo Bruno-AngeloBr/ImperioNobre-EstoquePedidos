@@ -61,7 +61,7 @@ namespace ImperioNobre.Services
 
         public void AtualizarQuantidade(string aba, int produtoId, int novaQtd)
         {
-            var range = $"{aba}!A";
+            var range = $"{aba}!A:A";
             var request = _service.Spreadsheets.Values.Get(_spreadsheetId, range);
             var response = request.Execute();
             var linhas = response.Values;
