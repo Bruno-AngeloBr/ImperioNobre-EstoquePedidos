@@ -22,5 +22,9 @@ namespace ImperioNobre.Controllers
         {
             return View();
         }
+        public IActionResult AddPedido()
+        {
+            return View();
+        }
     }
 }

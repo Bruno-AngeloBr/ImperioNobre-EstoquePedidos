@@ -17,6 +17,7 @@
     <table class="table table-bordered">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Produto</th>
                 <th>Sabor</th>
                 <th>Tamanho</th>
@@ -30,6 +31,7 @@
                 @if (item.QtdDisponivel != 0)
                 {
                     <tr>
+                        <td>@item.ProdutosID</td>
                         <td>@item.Nome</td>
                         <td>@item.Sabor</td>
                         <td>@item.Tamanho g</td>
@@ -42,7 +44,7 @@
     </table>
     <br />
     
-    <a class="btn btn-primary btn-sm fs-5" asp-controller="AdminPainel" asp-action="AddProdutos">+ Adicionar pedido</a>
+    <a class="btn btn-primary btn-sm fs-5" asp-controller="VendedorPainel" asp-action="AddPedido">+ Adicionar pedido</a>
 </div>
 
 

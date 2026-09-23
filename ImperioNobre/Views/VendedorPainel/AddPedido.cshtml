@@ -1,0 +1,124 @@
+﻿@{
+    Layout = "_LayoutVendedor";
+}
+
+@{
+    ViewData["Title"] = "AddPedido";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Adicionar - Pedido</h2>
+    <button type="submit" class="btn btn-primary">Salvar Pedido</button>
+</div>
+
+<br />
+
+<div class="mb-3">
+    <label for="pedidoId" class=" form-label lbPedido">Pedido ID: </label>
+    <input type="text" class="form-control-sm" id="pedidoId" value="12345" readonly>
+</div>
+
+<div class="mb-3">
+    <label for="quantidade" class="form-label lbPedido">Número da Remessa: </label>
+    <input type="number" name="quantidade"
+           class="form-control-sm input-pequeno"
+           min="1" step="1" value="1">
+</div>
+
+<!--Nome do cliente-->
+<div class="mb-3">
+    <label for="cliente" class="form-label lbPedido">Cliente:</label>
+    <select name="produto" class="form-select">
+        <option value="bolo">Bolo de Chocolate</option>
+        <option value="torta">Torta de Limão</option>
+        <option value="cupcake">Cupcake de Morango</option>
+        <option value="pudim">Pudim de Leite</option>
+    </select>
+</div>
+
+<!--Exibir ProdutoID / Nome / Sabor-->
+<table id="tabelaItens" class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Preço Unitário</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <select class="form-select form-select-sm">
+                    <option value="" selected disabled>Selecione</option>
+                    <option value="1">Cookie - Oreo Black | 110g | R$14</option>
+                    <option value="2">Cookie - Nutella | 110g | R$14</option>
+                    <option value="3">Mini Cookie - Tradicional | 50g | R$7</option>
+                </select>
+                <small class="text-danger">Disponível: 5 unidades</small>
+            </td>
+            <td>
+                <input type="number" class="form-control form-control-sm" min="1" step="1" value="1">
+            </td>
+            <td>
+                <input type="number" class="form-control form-control-sm" step="0.01" value="0.00">
+            </td>
+            <td>
+                <input type="text" class="form-control form-control-sm" readonly value="0.00">
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger btn-sm" onclick="removerLinha(this)">Delete</button>
+            </td>
+        </tr>
+        <!-- Você pode repetir <tr> para mais linhas -->
+    </tbody>
+</table>
+
+<button type="submit" class="btn btn-primary" onclick="adicionarLinha()">+ Adicionar item</button>
+<br />
+<br />
+<br />
+
+<div>
+    <label for="TotalPedido" class=" form-label lbPedido">Total: R$ 50,00</label>
+</div>
+
+
+<script>
+    function adicionarLinha() {
+        const tbody = document.querySelector("#tabelaItens tbody");
+        const novaLinha = document.createElement("tr");
+
+        novaLinha.innerHTML = `
+          <td>
+            <select class="form-select form-select-sm">
+              <option value="" selected disabled>Selecione</option>
+              <option value="1">Cookie - Oreo Black | 110g | R$14</option>
+              <option value="2">Cookie - Nutella | 110g | R$14</option>
+              <option value="3">Mini Cookie - Tradicional | 50g | R$7</option>
+            </select>
+            <small class="text-danger">Disponível: 5 unidades</small>
+          </td>
+          <td>
+            <input type="number" class="form-control form-control-sm" min="1" step="1" value="1">
+          </td>
+          <td>
+            <input type="number" class="form-control form-control-sm" step="0.01" value="0.00">
+          </td>
+          <td>
+            <input type="text" class="form-control form-control-sm" readonly value="0.00">
+          </td>
+          <td>
+            <button type="button" class="btn btn-danger btn-sm" onclick="removerLinha(this)">Delete</button>
+          </td>
+        `;
+
+        tbody.appendChild(novaLinha);
+    }
+
+    function removerLinha(botao) {
+        // sobe até o <tr> e remove
+        const linha = botao.closest("tr");
+        linha.remove();
+    }
+</script>

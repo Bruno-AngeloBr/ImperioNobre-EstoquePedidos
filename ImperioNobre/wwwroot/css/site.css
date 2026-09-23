@@ -20,3 +20,17 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.lbPedido{
+    font-size: 20px;
+}
+
+#pedidoId {
+    background-color: lightgray;
+    font-size: 15px;
+}
+
+.itemTravado {
+    background-color: lightgray;
+    font-size: 15px;
+}
