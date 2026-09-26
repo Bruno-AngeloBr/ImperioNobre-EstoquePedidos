@@ -24,16 +24,54 @@ namespace ImperioNobre.Controllers
         {
             _logger = logger;
 
+            // Obtém o ID da planilha
             _spreadsheetId = config["GoogleSheets:SpreadsheetId"];
+
+            if (string.IsNullOrWhiteSpace(_spreadsheetId))
+            {
+                throw new InvalidOperationException(
+                    "A configuração 'GoogleSheets:SpreadsheetId' não foi encontrada."
+                );
+            }
+
+            GoogleCredential credential;
+
+            // =========================================================
+            // LOCAL
+            // =========================================================
+            // Se existir um caminho para o arquivo JSON, usa o arquivo.
             var credencialPath = config["GoogleSheets:CredentialPath"];
 
-            //Credencial do email de serviço para acessar planilha
-            var credential = GoogleCredential.FromFile(credencialPath).CreateScoped(SheetsService.Scope.Spreadsheets);
+            if (!string.IsNullOrWhiteSpace(credencialPath))
+            {
+                credential = GoogleCredential.FromFile(credencialPath).CreateScoped(SheetsService.Scope.Spreadsheets);
+            }
+            else
+            {
+                // =====================================================
+                // AZURE
+                // =====================================================
+                // No Azure, a credencial será armazenada como JSON
+                // nas configurações do App Service.
+                var credentialsJson = config["GoogleSheets:CredentialsJson"];
 
+                if (string.IsNullOrWhiteSpace(credentialsJson))
+                {
+                    throw new InvalidOperationException(
+                        "Nenhuma credencial do Google foi configurada. " +
+                        "Configure 'GoogleSheets:CredentialPath' para execução local " +
+                        "ou 'GoogleSheets:CredentialsJson' no Azure."
+                    );
+                }
+
+                credential = GoogleCredential.FromJson(credentialsJson).CreateScoped(SheetsService.Scope.Spreadsheets);
+            }
+
+            // Cria o serviço do Google Sheets
             service = new SheetsService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = credential,
-                ApplicationName = "ImperioNobre",
+                ApplicationName = "ImperioNobre"
             });
         }
 
