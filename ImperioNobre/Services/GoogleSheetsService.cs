@@ -62,7 +62,7 @@ namespace ImperioNobre.Services
             });
         }
 
-        public List<Produto> LerProdutos(string aba)
+        public List<Produto> LerEstoqueGeral(string aba)
         {
             // Define o intervalo de colunas que você quer ler
             var range = $"{aba}!A:F";
@@ -75,15 +75,15 @@ namespace ImperioNobre.Services
             var response = request.Execute();
             var linhas = response.Values;
 
-            var produtos = new List<Produto>();
+            var produtosGeral = new List<Produto>();
 
             if (linhas == null || linhas.Count <= 1)
             {
-                return produtos;
+                return produtosGeral;
             }
 
-            // Começa em 1 para ignorar o cabeçalho
-            for (int i = 1; i < linhas.Count; i++)
+            // Começa em 2 para ignorar o cabeçalho
+            for (int i = 2; i < linhas.Count; i++)
             {
                 var coluna = linhas[i];
 
@@ -91,7 +91,7 @@ namespace ImperioNobre.Services
                 if (coluna.Count < 6)
                     continue;
 
-                produtos.Add(new Produto
+                produtosGeral.Add(new Produto
                 {
                     ProdutosID = int.Parse(coluna[0].ToString()),
                     Nome = coluna[1].ToString(),
@@ -102,7 +102,93 @@ namespace ImperioNobre.Services
                 });
             }
 
-            return produtos;
+            return produtosGeral;
+        }
+
+        public List<Produto> LerEstoqueVendedor1(string aba)
+        {
+            // Define o intervalo de colunas que você quer ler
+            var range = $"{aba}!H:M";
+
+            var request = _service.Spreadsheets.Values.Get(
+                _spreadsheetId,
+                range
+            );
+
+            var response = request.Execute();
+            var linhas = response.Values;
+
+            var produtosGeral = new List<Produto>();
+
+            if (linhas == null || linhas.Count <= 1)
+            {
+                return produtosGeral;
+            }
+
+            // Começa em 2 para ignorar o cabeçalho
+            for (int i = 2; i < linhas.Count; i++)
+            {
+                var coluna = linhas[i];
+
+                // Garante que existem as 6 colunas necessárias
+                if (coluna.Count < 6)
+                    continue;
+
+                produtosGeral.Add(new Produto
+                {
+                    ProdutosID = int.Parse(coluna[0].ToString()),
+                    Nome = coluna[1].ToString(),
+                    Tamanho = int.Parse(coluna[2].ToString()),
+                    Sabor = coluna[3].ToString(),
+                    PrecoUnit = double.Parse(coluna[4].ToString()),
+                    QtdDisponivel = int.Parse(coluna[5].ToString()),
+                });
+            }
+
+            return produtosGeral;
+        }
+
+        public List<Produto> LerEstoqueVendedor2(string aba)
+        {
+            // Define o intervalo de colunas que você quer ler
+            var range = $"{aba}!O:T";
+
+            var request = _service.Spreadsheets.Values.Get(
+                _spreadsheetId,
+                range
+            );
+
+            var response = request.Execute();
+            var linhas = response.Values;
+
+            var produtosGeral = new List<Produto>();
+
+            if (linhas == null || linhas.Count <= 1)
+            {
+                return produtosGeral;
+            }
+
+            // Começa em 2 para ignorar o cabeçalho
+            for (int i = 2; i < linhas.Count; i++)
+            {
+                var coluna = linhas[i];
+
+                // Garante que existem as 6 colunas necessárias
+                if (coluna.Count < 6)
+                    continue;
+
+                produtosGeral.Add(new Produto
+                {
+                    ProdutosID = int.Parse(coluna[0].ToString()),
+                    Nome = coluna[1].ToString(),
+                    Tamanho = int.Parse(coluna[2].ToString()),
+                    Sabor = coluna[3].ToString(),
+                    PrecoUnit = double.Parse(coluna[4].ToString()),
+                    QtdDisponivel = int.Parse(coluna[5].ToString()),
+                });
+            }
+
+            return produtosGeral;
         }
 
         public void AtualizarQuantidade(string aba, int produtoId, int novaQtd)

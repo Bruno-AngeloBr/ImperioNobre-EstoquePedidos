@@ -2,6 +2,7 @@
 using ImperioNobre.Models;     // classe Produto
 using ImperioNobre.Services;   // classe GoogleSheetsService
 using System.IO;
+using ImperioNobre.Models.ViewModels;
 
 namespace ImperioNobre.Controllers
 {
@@ -21,13 +22,19 @@ namespace ImperioNobre.Controllers
 
         public IActionResult Estoque()
         {
-            var produtos = _sheetsService.LerProdutos("Produtos");
-            return View(produtos);
+            var vm = new EstoqueViewModel
+            {
+                EstoqueGeral = _sheetsService.LerEstoqueGeral("Produtos"),
+                EstoqueVendedor1 = _sheetsService.LerEstoqueVendedor1("Produtos"),
+                EstoqueVendedor2 = _sheetsService.LerEstoqueVendedor2("Produtos")
+            };
+
+            return View(vm);
         }
 
         public IActionResult AddProdutos()
         {
-            var produtos = _sheetsService.LerProdutos("Produtos");
+            var produtos = _sheetsService.LerEstoqueGeral("Produtos");
             return View(produtos); // envia lista para a View AddProdutos.cshtml
         }
 

@@ -15,7 +15,7 @@ namespace ImperioNobre.Controllers
 
         public IActionResult Index()
         {
-            var produtos = _sheetsService.LerProdutos("Produtos");
+            var produtos = _sheetsService.LerEstoqueGeral("Produtos");
             return View(produtos);
         }
         public IActionResult Pedidos()
