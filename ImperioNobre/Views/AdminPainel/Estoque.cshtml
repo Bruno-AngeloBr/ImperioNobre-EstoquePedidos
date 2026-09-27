@@ -15,11 +15,6 @@
 <h6>Adicione ou remova itens do seu estoque para disponibilizá-los ao vendedor</h6>
 <br />
 <div>
-    <div class ="d-flex justify-content-between align-items-center mb-3">
-        <h2>Produtos disponíveis:</h2>  
-        <a class="btn btn-primary btn-sm fs-5" asp-controller="AdminPainel" asp-action="AddProdutos">Editar itens</a>
-    </div>
-
     <h4>Estoque geral:</h4>
     
     <table class="table table-striped">
@@ -49,8 +44,11 @@
         </tbody>
     </table>
     <br />
-    <h4>Estoque - Ana Laura:</h4>
 
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h4>Estoque - Ana Laura:</h4>
+        <a class="btn btn-primary btn-sm fs-5" href="#" onclick="AltEstoque1()" ; return false;>Editar itens</a>
+    </div>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -78,8 +76,11 @@
         </tbody>
     </table>
     <br />
-    <h4>Estoque - Pablo:</h4>
 
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h4>Estoque - Pablo:</h4>
+        <a class="btn btn-primary btn-sm fs-5" href="#" onclick="AltEstoque2()"; return false;>Editar itens</a>
+    </div>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -108,4 +109,23 @@
     </table>
 
 </div>
+
+<script>
+    // Selecionando qual estoque será solicitado para alteração
+    var estoque;
+
+    //Enviando variável que define o estoque para o controlador e para a Ação AddProdutos
+    function AltEstoque1() {
+        estoque = 1;
+        
+        window.location.href = '/AdminPainel/AddProdutos?estoque=' + estoque;
+    }
+
+    function AltEstoque2() {
+        estoque = 2;
+
+        window.location.href = '/AdminPainel/AddProdutos?estoque=' + estoque;
+    }
+
+</script>
 

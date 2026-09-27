@@ -191,9 +191,18 @@ namespace ImperioNobre.Services
             return produtosGeral;
         }
 
-        public void AtualizarQuantidade(string aba, int produtoId, int novaQtd)
+        public void AtualizarQuantidade(string aba, int produtoId, int novaQtd, int numeroEstoque)
         {
-            var range = $"{aba}!A:A";
+            string range;
+
+            if (numeroEstoque == 1)
+            {
+                range = $"{aba}!H:H";
+            }
+            else
+            {
+                range = $"{aba}!O:O";
+            }
 
             var request = _service.Spreadsheets.Values.Get(
                 _spreadsheetId,
@@ -206,8 +215,8 @@ namespace ImperioNobre.Services
             if (linhas == null)
                 return;
 
-            // Começa em 1 para ignorar o cabeçalho
-            for (int i = 1; i < linhas.Count; i++)
+            // Começa em 2 para ignorar o cabeçalho
+            for (int i = 2; i < linhas.Count; i++)
             {
                 if (linhas[i].Count == 0)
                     continue;
@@ -217,10 +226,20 @@ namespace ImperioNobre.Services
                     out int idPlanilha)
                     && idPlanilha == produtoId)
                 {
-                    // A planilha começa na linha 1.
-                    // Como i começa em 1 após o cabeçalho,
+                    // A planilha começa na linha 2.
+                    // Como i começa em 2 após o cabeçalho,
                     // a linha real é i + 1.
-                    var updateRange = $"{aba}!F{i + 1}";
+
+                    string updateRange;
+
+                    if (numeroEstoque == 1)
+                    {
+                        updateRange = $"{aba}!M{i + 1}";
+                    }
+                    else
+                    {
+                        updateRange = $"{aba}!T{i + 1}";
+                    }
 
                     var valueRange = new ValueRange
                     {

@@ -32,21 +32,38 @@ namespace ImperioNobre.Controllers
             return View(vm);
         }
 
-        public IActionResult AddProdutos()
+        public IActionResult AddProdutos(int estoque)
         {
-            var produtos = _sheetsService.LerEstoqueGeral("Produtos");
-            return View(produtos); // envia lista para a View AddProdutos.cshtml
+            List<Produto> produtos = new List<Produto>();
+
+            //Seleciona qual estoque será lido para alterar
+            if (estoque == 1)
+            {
+                produtos = _sheetsService.LerEstoqueVendedor1("Produtos");
+            }
+            else if (estoque == 2)
+            {
+                produtos = _sheetsService.LerEstoqueVendedor2("Produtos");
+            }
+
+            var vm = new SelecionarEstoqueViewModel
+            {
+                Produtos = produtos,
+                NumeroEstoque = estoque
+            };
+
+            return View(vm); // envia lista para a View AddProdutos.cshtml com os produtos e o estoque selecionado
         }
 
         [HttpPost]
-        public IActionResult SalvarAlteracoes([FromBody] List<ProdutoAlteracao> produtos)
+        public IActionResult SalvarAlteracoes([FromBody] SalvarAlteracoesViewModel dados)
         {
             try
             {
-                foreach (var produto in produtos)
+                foreach (var produto in dados.Produtos)
                 {
                     // Atualiza cada produto na planilha
-                    _sheetsService.AtualizarQuantidade("Produtos", produto.Id, produto.Quantidade);
+                    _sheetsService.AtualizarQuantidade("Produtos", produto.Id, produto.Quantidade, dados.NumeroEstoque);
                 }
 
                 return Ok(); // retorna sucesso (status 200)
