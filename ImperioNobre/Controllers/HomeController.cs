@@ -111,7 +111,8 @@ namespace ImperioNobre.Controllers
                     if (Nome == nomePlanilha && Senha == senhaPlanilha)
                     {
                         // 8. Se bater, login válido
-                        TempData["TipoUsuario"] = tipoUsuario; // guarda o tipo para usar depois
+                        HttpContext.Session.SetString("TipoUsuario", tipoUsuario);
+                        HttpContext.Session.SetString("NomeUsuario", nomePlanilha); // guarda o tipo para usar depois
 
                         if (tipoUsuario == "Admin")
                             return RedirectToAction("Index", "AdminPainel");

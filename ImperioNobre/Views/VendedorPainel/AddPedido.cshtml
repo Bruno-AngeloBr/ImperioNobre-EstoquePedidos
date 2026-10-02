@@ -1,4 +1,7 @@
-﻿@{
+﻿@using ImperioNobre.Models.ViewModels
+@model AddPedidoViewModel
+
+@{
     Layout = "_LayoutVendedor";
 }
 
@@ -15,7 +18,7 @@
 
 <div class="mb-3">
     <label for="pedidoId" class=" form-label lbPedido">Pedido ID: </label>
-    <input type="text" class="form-control-sm" id="pedidoId" value="12345" readonly>
+    <input type="text" class="form-control-sm" id="pedidoId" value="" readonly>
 </div>
 
 <div class="mb-3">
@@ -28,11 +31,11 @@
 <!--Nome do cliente-->
 <div class="mb-3">
     <label for="cliente" class="form-label lbPedido">Cliente:</label>
-    <select name="produto" class="form-select">
-        <option value="bolo">Bolo de Chocolate</option>
-        <option value="torta">Torta de Limão</option>
-        <option value="cupcake">Cupcake de Morango</option>
-        <option value="pudim">Pudim de Leite</option>
+    <select id="cliente" name="produto" class="form-select">
+        @foreach (var item in Model.Clientes)
+        {
+            <option value=@item.ClientID>@item.Nome</option>
+        }
     </select>
 </div>
 
@@ -51,11 +54,15 @@
             <td>
                 <select class="form-select form-select-sm">
                     <option value="" selected disabled>Selecione</option>
-                    <option value="1">Cookie - Oreo Black | 110g | R$14</option>
-                    <option value="2">Cookie - Nutella | 110g | R$14</option>
-                    <option value="3">Mini Cookie - Tradicional | 50g | R$7</option>
+                    @foreach (var item in Model.Produtos)
+                    {
+                        @if (item.QtdDisponivel != 0)
+                        {
+                            <option value=@item.ProdutosID>@item.Nome - @item.Sabor | @item.Tamanho g</option>
+                        }
+                    }
                 </select>
-                <small class="text-danger">Disponível: 5 unidades</small>
+                <small id="qtdDisponivel" class="text-danger">Disponível: 5 unidades</small>
             </td>
             <td>
                 <input type="number" class="form-control form-control-sm" min="1" step="1" value="1">
@@ -85,6 +92,21 @@
 
 
 <script>
+    //Atualizando o ID do cliente no pedido
+    const cliente = document.getElementById("cliente");
+    const pedidoId = document.getElementById("pedidoId");
+
+    function atualizarClienteID() {
+        pedidoId.value = cliente.value;
+    }
+
+    // Quando o usuário trocar o cliente
+    cliente.addEventListener("change", atualizarClienteID);
+
+    // Quando a página carregar
+    atualizarClienteID();
+
+
     function adicionarLinha() {
         const tbody = document.querySelector("#tabelaItens tbody");
         const novaLinha = document.createElement("tr");
@@ -121,4 +143,6 @@
         const linha = botao.closest("tr");
         linha.remove();
     }
+
+    
 </script>

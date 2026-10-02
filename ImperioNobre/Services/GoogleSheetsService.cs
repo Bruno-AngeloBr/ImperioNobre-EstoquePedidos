@@ -191,6 +191,46 @@ namespace ImperioNobre.Services
             return produtosGeral;
         }
 
+        // Ler tabela clientes
+        public List<Cliente> LerClientes(string aba)
+        {
+            // Define o intervalo de colunas que você quer ler
+            var range = $"{aba}!A:B";
+
+            var request = _service.Spreadsheets.Values.Get(
+                _spreadsheetId,
+                range
+            );
+
+            var response = request.Execute();
+            var linhas = response.Values;
+
+            var clientesGeral = new List<Cliente>();
+
+            if (linhas == null || linhas.Count <= 1)
+            {
+                return clientesGeral;
+            }
+
+            // Começa em 1 para ignorar o cabeçalho
+            for (int i = 1; i < linhas.Count; i++)
+            {
+                var coluna = linhas[i];
+
+                // Garante que existem as 6 colunas necessárias
+                if (coluna.Count < 2)
+                    continue;
+
+                clientesGeral.Add(new Cliente
+                {
+                    ClientID = int.Parse(coluna[0].ToString()),
+                    Nome = coluna[1].ToString(),
+                });
+            }
+
+            return clientesGeral;
+        }
+
         public void AtualizarQuantidade(string aba, int produtoId, int novaQtd, int numeroEstoque)
         {
             string range;
