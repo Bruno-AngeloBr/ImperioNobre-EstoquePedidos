@@ -52,26 +52,28 @@
     <tbody>
         <tr>
             <td>
-                <select class="form-select form-select-sm">
+                <select class="form-select form-select-sm produto">
                     <option value="" selected disabled>Selecione</option>
                     @foreach (var item in Model.Produtos)
                     {
                         @if (item.QtdDisponivel != 0)
                         {
-                            <option value=@item.ProdutosID>@item.Nome - @item.Sabor | @item.Tamanho g</option>
+                            <option value="@item.ProdutosID">
+                                @item.Nome - @item.Sabor | @item.Tamanho g
+                            </option>
                         }
                     }
                 </select>
-                <small id="qtdDisponivel" class="text-danger">Disponível: 5 unidades</small>
+                <small class="qtdDisponivel text-danger">Disponível: 0 unidades</small>
             </td>
             <td>
-                <input type="number" class="form-control form-control-sm" min="1" step="1" value="1">
+                <input type="number" class="form-control form-control-sm quantidade" min="1" step="1" value="1">
             </td>
             <td>
-                <input type="number" class="form-control form-control-sm" step="0.01" value="0.00">
+                <input type="number" class="form-control form-control-sm precoUnitario" step="0.01" value="0.00">
             </td>
             <td>
-                <input type="text" class="form-control form-control-sm" readonly value="0.00">
+                <input type="text" class="form-control form-control-sm total" readonly value="0.00">
             </td>
             <td>
                 <button type="button" class="btn btn-danger btn-sm" onclick="removerLinha(this)">Delete</button>
@@ -81,7 +83,7 @@
     </tbody>
 </table>
 
-<button type="submit" class="btn btn-primary" onclick="adicionarLinha()">+ Adicionar item</button>
+<button type="button" class="btn btn-primary" onclick="adicionarLinha()">+ Adicionar item</button>
 <br />
 <br />
 <br />
@@ -111,31 +113,68 @@
         const tbody = document.querySelector("#tabelaItens tbody");
         const novaLinha = document.createElement("tr");
 
+        let opcoesProdutos = `
+            <option value="" selected disabled>Selecione</option>
+        `;
+
+        produtos.forEach(produto => {
+
+            if (produto.QtdDisponivel != 0) {
+
+                opcoesProdutos += `
+                    <option value="${produto.ProdutosID}">
+                        ${produto.Nome} - ${produto.Sabor} | ${produto.Tamanho}g
+                    </option>
+                `;
+            }
+        });
+
         novaLinha.innerHTML = `
-          <td>
-            <select class="form-select form-select-sm">
-              <option value="" selected disabled>Selecione</option>
-              <option value="1">Cookie - Oreo Black | 110g | R$14</option>
-              <option value="2">Cookie - Nutella | 110g | R$14</option>
-              <option value="3">Mini Cookie - Tradicional | 50g | R$7</option>
-            </select>
-            <small class="text-danger">Disponível: 5 unidades</small>
-          </td>
-          <td>
-            <input type="number" class="form-control form-control-sm" min="1" step="1" value="1">
-          </td>
-          <td>
-            <input type="number" class="form-control form-control-sm" step="0.01" value="0.00">
-          </td>
-          <td>
-            <input type="text" class="form-control form-control-sm" readonly value="0.00">
-          </td>
-          <td>
-            <button type="button" class="btn btn-danger btn-sm" onclick="removerLinha(this)">Delete</button>
-          </td>
+            <td>
+                <select class="form-select form-select-sm produto">
+                    ${opcoesProdutos}
+                </select>
+
+                <small class="qtdDisponivel text-danger">
+                    Disponível: 0 unidades
+                </small>
+            </td>
+
+            <td>
+                <input type="number"
+                       class="form-control form-control-sm quantidade"
+                       min="1"
+                       step="1"
+                       value="1">
+            </td>
+
+            <td>
+                <input type="number"
+                       class="form-control form-control-sm precoUnitario"
+                       step="0.01"
+                       value="0.00"
+                       readonly>
+            </td>
+
+            <td>
+                <input type="text"
+                       class="form-control form-control-sm total"
+                       readonly
+                       value="0.00">
+            </td>
+
+            <td>
+                <button type="button"
+                        class="btn btn-danger btn-sm"
+                        onclick="removerLinha(this)">
+                    Delete
+                </button>
+            </td>
         `;
 
         tbody.appendChild(novaLinha);
+
+        configurarLinha(novaLinha);
     }
 
     function removerLinha(botao) {
@@ -143,6 +182,67 @@
         const linha = botao.closest("tr");
         linha.remove();
     }
+
+    //Implementando alterações de quantidade e preço
+    //Acessando lista
+    const produtos = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Produtos));
+
+    function atualizarProduto(select) {
+
+        const linha = select.closest("tr");
+
+        const produtoId = select.value;
+
+        const produto = produtos.find(p => p.ProdutosID == produtoId);
+
+        if (!produto) {
+            return;
+        }
+
+        const qtdDisponivel = linha.querySelector(".qtdDisponivel");
+        const precoUnitario = linha.querySelector(".precoUnitario");
+        const quantidade = linha.querySelector(".quantidade");
+        const total = linha.querySelector(".total");
+
+        qtdDisponivel.textContent = `Disponível: ${produto.QtdDisponivel} unidades`;
+
+        precoUnitario.value = produto.PrecoUnit;
+
+        quantidade.max = produto.QtdDisponivel;
+
+        atualizarTotal(linha);
+    }
+
+    function atualizarTotal(linha) {
+
+        const quantidade = linha.querySelector(".quantidade");
+        const precoUnitario = linha.querySelector(".precoUnitario");
+        const total = linha.querySelector(".total");
+
+        const qtd = Number(quantidade.value);
+        const preco = Number(precoUnitario.value);
+
+        total.value = (qtd * preco).toFixed(2);
+    }
+
+    function configurarLinha(linha) {
+
+        const select = linha.querySelector(".produto");
+        const quantidade = linha.querySelector(".quantidade");
+
+        select.addEventListener("change", function () {
+            atualizarProduto(this);
+        });
+
+        quantidade.addEventListener("input", function () {
+            atualizarTotal(linha);
+        });
+    }
+
+    const primeiraLinha =
+        document.querySelector("#tabelaItens tbody tr");
+
+    configurarLinha(primeiraLinha);
 
     
 </script>
