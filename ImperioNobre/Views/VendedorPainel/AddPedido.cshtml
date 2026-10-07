@@ -11,35 +11,33 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">Adicionar - Pedido</h2>
-    <button type="submit" class="btn btn-primary">Salvar Pedido</button>
+    <button type="button" class="btn btn-primary" onclick="salvarPedido()">Salvar Pedido</button>
 </div>
 
 <br />
 
 <div class="mb-3">
-    <label id="lbPedido" for="pedidoId" class=" form-label">Pedido ID: </label>
-    <input type="text" class="form-control-sm" id="pedidoId" value="" readonly>
+    <label id="lbCliente" class=" form-label">Cliente ID: </label>
+    <input type="text" class="form-control-sm" id="clienteId" value="" readonly>
 </div>
 
 <div id="cabecalho">
     <div id="numero-remessa" class="mb-3">
-        <label for="quantidade" class="form-label">Número da Remessa: </label>
-        <input type="number" name="quantidade"
+        <label class="form-label">Número da Remessa: </label>
+        <input type="number" name="remessa"
                class="form-control-sm input-pequeno"
                min="1" step="1" value="1">
     </div>  
     <div id="data-entrega" class="mb-3">
-        <label for="dataEntrega" class="form-label">Data de entrega: </label>
-        <input type="date" name="dataEntrega"
-               class="form-control-sm input-pequeno"
-               min="1" step="1" value="1">
+        <label class="form-label">Data de entrega: </label>
+        <input type="date" name="dataEntrega" id="dataEntrega"
+               class="form-control-sm input-pequeno" />
     </div>
 
     <div id="data-pagamento" class="mb-3">
-        <label for="dataPagamento" class="form-label">Data de pagamento: </label>
-        <input type="date" name="dataPagamento"
-               class="form-control-sm input-pequeno"
-               min="1" step="1" value="1">
+        <label class="form-label">Data de pagamento: </label>
+        <input type="date" name="dataPagamento" id="dataPagamento"
+               class="form-control-sm input-pequeno" />
     </div>
 </div>
 
@@ -113,12 +111,39 @@
 
 
 <script>
+    //Lista pra guardar itens do pedido
+    var dadosCliente = null;
+    var dadoDataEntrega = null;
+    var dadoDataPagamento = null;
+
+    const dataEntrega = document.getElementById("dataEntrega");
+
+    dataEntrega.addEventListener("change", function () {
+        dadoDataEntrega = this.value;
+    });
+
+    const dataPagamento = document.getElementById("dataPagamento");
+
+    dataPagamento.addEventListener("change", function () {
+        dadoDataPagamento = this.value;
+    });
+
+    const remessa = document.querySelector("[name='remessa']");
+
+    var dadoRemessa = Number(remessa.value);
+
+    remessa.addEventListener("change", function () {
+        dadoRemessa = Number(this.value);
+    });
+
     //Atualizando o ID do cliente no pedido
     const cliente = document.getElementById("cliente");
-    const pedidoId = document.getElementById("pedidoId");
+    const clienteId = document.getElementById("clienteId");
 
     function atualizarClienteID() {
-        pedidoId.value = cliente.value;
+        clienteId.value = cliente.value;
+        var clienteID = parseInt(cliente.value);
+        dadosCliente = clienteID;
     }
 
     // Quando o usuário trocar o cliente
@@ -308,5 +333,57 @@
             `Total: R$ ${totalPedido.toFixed(2).replace(".", ",")}`;
     }
 
+    
+    function salvarPedido() {
+        var itens = [];
+
+        const linhas = document.querySelectorAll("#tabelaItens tbody tr");
+
+        linhas.forEach(linha => {
+
+            const produto = linha.querySelector(".produto");
+            const quantidade = linha.querySelector(".quantidade");
+            const precoUnitario = linha.querySelector(".precoUnitario");
+            const desconto = linha.querySelector(".desconto");
+            const total = linha.querySelector(".total");
+
+            const produtoId = parseInt(produto.value);
+            const qtd = Number(quantidade.value);
+            const preco = Number(precoUnitario.value);
+            const desc = Number(desconto.value);
+            const valorTotal = Number(total.value);
+
+            itens.push({    
+                produtoId: produtoId,
+                quantidade: qtd,
+                precoUnitario: preco,
+                desconto: desc,
+                total: valorTotal
+            });
+        });
+
+        var dados = {
+            tipoUsuario: @Model.TipoUsuario,
+            clienteId: dadosCliente,
+            numeroRemessa: dadoRemessa,
+            dataEntrega: dadoDataEntrega,
+            dataPagamento: dadoDataPagamento,
+            itensPedido: itens
+        };
+
+        // Envia a lista global para o Controller
+        fetch('/VendedorPainel/SalvarItensPedido', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dados)
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert("Alterações salvas com sucesso!");
+                } else {
+                    alert("Erro ao salvar alterações.");
+                }
+            });
+    }
     
 </script>
