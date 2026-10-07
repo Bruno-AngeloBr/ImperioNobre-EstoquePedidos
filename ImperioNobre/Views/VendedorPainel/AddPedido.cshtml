@@ -17,20 +17,35 @@
 <br />
 
 <div class="mb-3">
-    <label for="pedidoId" class=" form-label lbPedido">Pedido ID: </label>
+    <label id="lbPedido" for="pedidoId" class=" form-label">Pedido ID: </label>
     <input type="text" class="form-control-sm" id="pedidoId" value="" readonly>
 </div>
 
-<div class="mb-3">
-    <label for="quantidade" class="form-label lbPedido">Número da Remessa: </label>
-    <input type="number" name="quantidade"
-           class="form-control-sm input-pequeno"
-           min="1" step="1" value="1">
+<div id="cabecalho">
+    <div id="numero-remessa" class="mb-3">
+        <label for="quantidade" class="form-label">Número da Remessa: </label>
+        <input type="number" name="quantidade"
+               class="form-control-sm input-pequeno"
+               min="1" step="1" value="1">
+    </div>  
+    <div id="data-entrega" class="mb-3">
+        <label for="dataEntrega" class="form-label">Data de entrega: </label>
+        <input type="date" name="dataEntrega"
+               class="form-control-sm input-pequeno"
+               min="1" step="1" value="1">
+    </div>
+
+    <div id="data-pagamento" class="mb-3">
+        <label for="dataPagamento" class="form-label">Data de pagamento: </label>
+        <input type="date" name="dataPagamento"
+               class="form-control-sm input-pequeno"
+               min="1" step="1" value="1">
+    </div>
 </div>
 
 <!--Nome do cliente-->
-<div class="mb-3">
-    <label for="cliente" class="form-label lbPedido">Cliente:</label>
+<div id="cliente-pedido" class="mb-3">
+    <label for="cliente" class="form-label">Cliente:</label>
     <select id="cliente" name="produto" class="form-select">
         @foreach (var item in Model.Clientes)
         {
@@ -46,6 +61,7 @@
             <th>Produto</th>
             <th>Quantidade</th>
             <th>Preço Unitário</th>
+            <th>Desconto</th>
             <th>Total</th>
         </tr>
     </thead>
@@ -73,6 +89,9 @@
                 <input type="number" class="form-control form-control-sm precoUnitario" step="0.01" value="0.00">
             </td>
             <td>
+                <input type="number" class="form-control form-control-sm desconto" step="0.01" value="0.00">
+            </td>
+            <td>
                 <input type="text" class="form-control form-control-sm total" readonly value="0.00">
             </td>
             <td>
@@ -89,7 +108,7 @@
 <br />
 
 <div>
-    <label id="TotalPedido" class=" form-label lbPedido">Total: R$ 0,00</label>
+    <label id="TotalPedido" class=" form-label">Total: R$ 0,00</label>
 </div>
 
 
@@ -156,6 +175,13 @@
             </td>
 
             <td>
+                 <input type="number" 
+                        class="form-control form-control-sm desconto" 
+                        step="0.01" 
+                        value="0.00">
+            </td>
+
+            <td>
                 <input type="text"
                        class="form-control form-control-sm total"
                        readonly
@@ -219,12 +245,14 @@
 
         const quantidade = linha.querySelector(".quantidade");
         const precoUnitario = linha.querySelector(".precoUnitario");
+        const desconto = linha.querySelector(".desconto");
         const total = linha.querySelector(".total");
 
         const qtd = Number(quantidade.value);
         const preco = Number(precoUnitario.value);
+        const desc = Number(desconto.value);
 
-        total.value = (qtd * preco).toFixed(2);
+        total.value = ((qtd * preco) - desc).toFixed(2);
     }
 
     function configurarLinha(linha) {
@@ -232,6 +260,7 @@
         const select = linha.querySelector(".produto");
         const quantidade = linha.querySelector(".quantidade");
         const precoUnitario = linha.querySelector(".precoUnitario");
+        const desconto = linha.querySelector(".desconto");
 
         select.addEventListener("change", function () {
             atualizarProduto(this);
@@ -244,6 +273,11 @@
         });
 
         precoUnitario.addEventListener("input", function () {
+            atualizarTotal(linha);
+            atualizarTotalPedido();
+        });
+
+        desconto.addEventListener("input", function () {
             atualizarTotal(linha);
             atualizarTotalPedido();
         });
@@ -265,7 +299,7 @@
             const total = linha.querySelector(".total");
 
             if (total) {
-                totalPedido += Number(total.value) || 0;
+                totalPedido += Number(total.value) || 0;    
             }
 
         });

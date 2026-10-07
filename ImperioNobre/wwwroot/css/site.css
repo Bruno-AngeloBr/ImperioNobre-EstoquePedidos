@@ -21,8 +21,9 @@ body {
   margin-bottom: 60px;
 }
 
-.lbPedido{
-    font-size: 20px;
+
+#lbPedido{
+    font-size: 18px;
 }
 
 #pedidoId {
@@ -30,7 +31,29 @@ body {
     font-size: 15px;
 }
 
-.itemTravado {
-    background-color: lightgray;
-    font-size: 15px;
+#TotalPedido {
+    font-size: 18px;
+}
+
+/*Formatando cabeçalho da tela AddPedido*/
+#cabecalho #data-entrega {
+    float: left;
+    margin-right: 30px;
+    font-size: 18px;
+}
+
+#cabecalho #data-pagamento {
+    float: left;
+    font-size: 18px;
+}
+
+#cabecalho #numero-remessa {
+    float: left;
+    margin-right: 30px;
+    font-size: 18px;
+}
+
+#cliente-pedido {
+    clear: both;
+    font-size: 18px;
 }
