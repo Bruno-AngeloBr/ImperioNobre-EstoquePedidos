@@ -89,7 +89,7 @@
 <br />
 
 <div>
-    <label for="TotalPedido" class=" form-label lbPedido">Total: R$ 50,00</label>
+    <label id="TotalPedido" class=" form-label lbPedido">Total: R$ 0,00</label>
 </div>
 
 
@@ -180,7 +180,10 @@
     function removerLinha(botao) {
         // sobe até o <tr> e remove
         const linha = botao.closest("tr");
+
         linha.remove();
+
+        atualizarTotalPedido();
     }
 
     //Implementando alterações de quantidade e preço
@@ -232,10 +235,12 @@
 
         select.addEventListener("change", function () {
             atualizarProduto(this);
+            atualizarTotalPedido();
         });
 
         quantidade.addEventListener("input", function () {
             atualizarTotal(linha);
+            atualizarTotalPedido();
         });
     }
 
@@ -243,6 +248,26 @@
         document.querySelector("#tabelaItens tbody tr");
 
     configurarLinha(primeiraLinha);
+
+    function atualizarTotalPedido() {
+
+        const linhas = document.querySelectorAll("#tabelaItens tbody tr");
+
+        let totalPedido = 0;
+
+        linhas.forEach(linha => {
+
+            const total = linha.querySelector(".total");
+
+            if (total) {
+                totalPedido += Number(total.value) || 0;
+            }
+
+        });
+
+        document.getElementById("TotalPedido").textContent =
+            `Total: R$ ${totalPedido.toFixed(2).replace(".", ",")}`;
+    }
 
     
 </script>
