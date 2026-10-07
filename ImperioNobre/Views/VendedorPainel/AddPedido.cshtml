@@ -152,8 +152,7 @@
                 <input type="number"
                        class="form-control form-control-sm precoUnitario"
                        step="0.01"
-                       value="0.00"
-                       readonly>
+                       value="0.00">
             </td>
 
             <td>
@@ -209,7 +208,7 @@
 
         qtdDisponivel.textContent = `Disponível: ${produto.QtdDisponivel} unidades`;
 
-        precoUnitario.value = produto.PrecoUnit;
+        precoUnitario.value = Number(produto.PrecoUnit).toFixed(2);
 
         quantidade.max = produto.QtdDisponivel;
 
@@ -232,6 +231,7 @@
 
         const select = linha.querySelector(".produto");
         const quantidade = linha.querySelector(".quantidade");
+        const precoUnitario = linha.querySelector(".precoUnitario");
 
         select.addEventListener("change", function () {
             atualizarProduto(this);
@@ -239,6 +239,11 @@
         });
 
         quantidade.addEventListener("input", function () {
+            atualizarTotal(linha);
+            atualizarTotalPedido();
+        });
+
+        precoUnitario.addEventListener("input", function () {
             atualizarTotal(linha);
             atualizarTotalPedido();
         });
