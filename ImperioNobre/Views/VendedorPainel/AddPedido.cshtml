@@ -144,6 +144,9 @@
         clienteId.value = cliente.value;
         var clienteID = parseInt(cliente.value);
         dadosCliente = clienteID;
+        //teste
+        console.log("ID selecionado:", cliente.value);
+        console.log("ID convertido:", dadosCliente);
     }
 
     // Quando o usuário trocar o cliente
@@ -333,7 +336,7 @@
             `Total: R$ ${totalPedido.toFixed(2).replace(".", ",")}`;
     }
     
-    function salvarPedido() {
+    async function salvarPedido() {
         var itens = [];
 
         if (!dadoDataEntrega) {
@@ -357,6 +360,11 @@
         }
 
         const linhas = document.querySelectorAll("#tabelaItens tbody tr");
+
+        if (linhas.length === 0) {
+            alert("Adicione pelo menos um item à remessa.");
+            return;
+        }
 
         for (const linha of linhas) {
 
@@ -400,6 +408,11 @@
                 return;
             }
 
+            if (!Number.isFinite(preco) || preco < 0) {
+                alert("O preço unitário é inválido.");
+                return;
+            }
+
             // Valida o desconto
             if (!Number.isFinite(desc) || desc < 0) {
                 alert("O desconto não pode ser negativo.");
@@ -423,7 +436,7 @@
         }
 
         var dados = {
-            tipoUsuario: @Model.TipoUsuario,
+            tipoUsuario: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TipoUsuario)),
             clienteId: dadosCliente,
             numeroRemessa: dadoRemessa,
             dataEntrega: dadoDataEntrega,
@@ -432,18 +445,32 @@
         };
 
         // Envia a lista global para o Controller
-        fetch('/VendedorPainel/SalvarItensPedido', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dados)
-        })
-            .then(response => {
-                if (response.ok) {
-                    alert("Alterações salvas com sucesso!");
-                } else {
-                    alert("Erro ao salvar alterações.");
-                }
+        
+
+        try {
+            //Teste
+            console.log("Objeto enviado:", JSON.stringify(dados));
+
+            const resposta = await fetch('/VendedorPainel/SalvarItensPedido', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dados)
             });
+
+            if (!resposta.ok) {
+                const mensagem = await resposta.text();
+                alert(mensagem || "Não foi possível salvar a remessa.");
+                return;
+            }
+
+            alert("Remessa salva com sucesso!");
+        }
+        catch (erro) {
+            console.error("Erro ao enviar a remessa:", erro);
+            alert("Não foi possível conectar ao servidor.");
+        }
     }
-    
+
 </script>

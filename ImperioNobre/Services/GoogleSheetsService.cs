@@ -3,6 +3,7 @@ using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using ImperioNobre.Models;
+using System.Linq;
 
 namespace ImperioNobre.Services
 {
@@ -305,6 +306,132 @@ namespace ImperioNobre.Services
                     break;
                 }
             }
+        }
+
+        public void AdicionarInformacoesRemessa(string aba, string tipoUsuario, int clienteId, DateTime dataEntrega, DateTime dataPagamento)
+        {
+            // Definindo o vendedor: !
+            // Define o intervalo de colunas que você quer ler
+            var range = $"Usuarios!A:C";
+
+            var requestUsuario = _service.Spreadsheets.Values.Get(_spreadsheetId, range);
+
+            var response = requestUsuario.Execute();
+            var linhas = response.Values;
+
+            string vendedor = null;
+
+            if (linhas != null)
+            {
+                for (int i = 1; i < linhas.Count; i++)
+                {
+                    var coluna = linhas[i];
+
+                    // Garante que a linha possui as colunas A e C
+                    if (coluna.Count < 3)
+                        continue;
+
+                    string nomeUsuario = coluna[0].ToString();
+                    string tipoCadastrado = coluna[2].ToString();
+
+                    if (tipoCadastrado.Equals(tipoUsuario, StringComparison.OrdinalIgnoreCase))
+                    {
+                        vendedor = nomeUsuario;
+                        break;
+                    }
+                }
+            }
+
+            if (vendedor == null)
+            {
+                throw new InvalidOperationException(
+                    $"Nenhum usuário encontrado para o tipo '{tipoUsuario}'."
+                );
+            }
+
+            // Alterando a planilha: !
+            // Descobre a próxima linha disponível usando a coluna A
+            var requestLeitura = _service.Spreadsheets.Values.Get(
+                _spreadsheetId,
+                $"{aba}!A:A"
+            );
+
+            response = requestLeitura.Execute();
+            linhas = response.Values;
+
+            // Considera que a primeira linha contém o cabeçalho
+            int linhaDestino = (linhas?.Count ?? 0) + 1;
+
+            // Prepara as atualizações das quatro colunas
+            var atualizacoes = new List<ValueRange>
+            {
+                new ValueRange
+                {
+                    Range = $"{aba}!A{linhaDestino}",
+                    Values = new List<IList<object>>
+                    {
+                        new List<object> { vendedor }
+                    }
+                },
+                new ValueRange
+                {
+                    Range = $"{aba}!B{linhaDestino}",
+                    Values = new List<IList<object>>
+                    {
+                        new List<object> { clienteId }
+                    }
+                },
+                new ValueRange
+                {
+                    Range = $"{aba}!H{linhaDestino}",
+                    Values = new List<IList<object>>
+                    {
+                        new List<object>
+                        {
+                            dataEntrega.ToString("dd/MM/yyyy")
+                        }
+                    }
+                },
+                new ValueRange
+                {
+                    Range = $"{aba}!M{linhaDestino}",
+                    Values = new List<IList<object>>
+                    {
+                        new List<object>
+                        {
+                            dataPagamento.ToString("dd/MM/yyyy")
+                        }
+                    }
+                }
+            };
+
+            //Executando requisição
+            var requisicao = _service.Spreadsheets.Values.BatchUpdate(
+                new BatchUpdateValuesRequest
+                {
+                    ValueInputOption = "USER_ENTERED",
+                    Data = atualizacoes
+                },
+                _spreadsheetId
+            );
+
+
+            requisicao.Execute();
+        }
+
+        public void AdicionarItensRemessa(string aba, int produtoId, int quantidade, double preco, double desconto, double totalItem)
+        {
+
+        }
+        public bool ExisteAba(string nomeAba)
+        {
+            var planilha = _service.Spreadsheets
+                .Get(_spreadsheetId)
+                .Execute();
+
+            return planilha.Sheets.Any(
+                aba => aba.Properties.Title == nomeAba
+            );
         }
     }
 }
