@@ -332,14 +332,33 @@
         document.getElementById("TotalPedido").textContent =
             `Total: R$ ${totalPedido.toFixed(2).replace(".", ",")}`;
     }
-
     
     function salvarPedido() {
         var itens = [];
 
+        if (!dadoDataEntrega) {
+            alert("Informe a data de entrega.");
+            return;
+        }
+
+        if (!dadoDataPagamento) {
+            alert("Informe a data de pagamento.");
+            return;
+        }
+
+        if (!dadosCliente) {
+            alert("Selecione um cliente.");
+            return;
+        }
+
+        if (!dadoRemessa || dadoRemessa < 1) {
+            alert("Informe o número da remessa.");
+            return;
+        }
+
         const linhas = document.querySelectorAll("#tabelaItens tbody tr");
 
-        linhas.forEach(linha => {
+        for (const linha of linhas) {
 
             const produto = linha.querySelector(".produto");
             const quantidade = linha.querySelector(".quantidade");
@@ -347,11 +366,52 @@
             const desconto = linha.querySelector(".desconto");
             const total = linha.querySelector(".total");
 
+            if (!produto.value) {
+                alert("Selecione um produto em todas as linhas.");
+                return;
+            }
+
             const produtoId = parseInt(produto.value);
             const qtd = Number(quantidade.value);
             const preco = Number(precoUnitario.value);
             const desc = Number(desconto.value);
-            const valorTotal = Number(total.value);
+
+            // Localiza o produto selecionado na lista carregada do servidor
+            const produtoSelecionado = produtos.find(
+                p => Number(p.ProdutosID) === produtoId
+            );
+
+            if (!produtoSelecionado) {
+                alert("Produto inválido ou não encontrado.");
+                return;
+            }
+
+            const estoqueDisponivel = Number(produtoSelecionado.QtdDisponivel);
+            const valorBruto = qtd * preco;
+
+            // Valida a quantidade
+            if (!Number.isFinite(qtd) || qtd <= 0) {
+                alert("A quantidade deve ser maior que zero.");
+                return;
+            }
+
+            if (qtd > estoqueDisponivel) {
+                alert(`Estoque insuficiente. Disponível: ${estoqueDisponivel}.`);
+                return;
+            }
+
+            // Valida o desconto
+            if (!Number.isFinite(desc) || desc < 0) {
+                alert("O desconto não pode ser negativo.");
+                return;
+            }
+
+            if (desc > valorBruto) {
+                alert("O desconto não pode ser maior que o valor da linha.");
+                return;
+            }
+
+            const valorTotal = valorBruto - desc;
 
             itens.push({    
                 produtoId: produtoId,
@@ -360,7 +420,7 @@
                 desconto: desc,
                 total: valorTotal
             });
-        });
+        }
 
         var dados = {
             tipoUsuario: @Model.TipoUsuario,
